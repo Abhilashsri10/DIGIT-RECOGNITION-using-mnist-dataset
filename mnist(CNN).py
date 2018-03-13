@@ -42,18 +42,7 @@ else:
     x_train = x_train.reshape(x_train.shape[0], img_rows, img_cols, 1)
     x_test = x_test.reshape(x_test.shape[0], img_rows, img_cols, 1)
     Input_shape = (img_rows, img_cols, 1)
-    
-'''
-fig=plt.figure()
-for i in range(9):
-    plt.subplot(3,3,i+1)
-    plt.tight_layout()
-    plt.imshow(x_train[i],cmap='gray',interpolation='none')
-    plt.title('digit: {}'.format(y_train[i]))
-    plt.xticks([])
-    plt.yticks([])
-fig
-'''
+
 
 x_train=x_train.astype('float32')
 x_test=x_test.astype('float32')
@@ -82,6 +71,8 @@ model.add(Dense(CLASSES,activation='softmax'))
 model.compile(loss='categorical_crossentropy',optimizer=OPTIMIZER,metrics=['accuracy'])
 
 model.fit(x_train,Y_train,batch_size=BATCH_SIZE,epochs=EPOCH,verbose=VERBOSE,validation_data=(x_test,Y_test))
-
-score=model.evaluate(x_test,Y_test,verbose=0)
-print('accuracy: %.2f%%'%(score[1]*100))
+model_json=model.to_json()
+with open("mnist.json","w") as json_file:
+    json_file.write(model_json)
+model.save_weights("mnist.h5")
+print("saved model to disk")
